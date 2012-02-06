@@ -5,19 +5,15 @@ using NUnit.Framework;
 namespace StopLossKata3
 {
     [TestFixture]
-    public class When_positions_is_acquired
+    public class When_positions_is_acquired : SpecificationFor<StopLoss, PositionAcquired>
     {
-        FakeBus _bus;
-        StopLoss _stopLoss;
         Guid _priceId;
 
         [SetUp]
         public void Setup()
         {
-            _bus = new FakeBus();
-            _stopLoss = new StopLoss(_bus);
             _priceId = Guid.NewGuid();
-            _stopLoss.Handle(new PositionAcquired(10.0m, _priceId));
+            Subject.Handle(new PositionAcquired(10.0m, _priceId));
         }
 
         [Test]
@@ -28,7 +24,39 @@ namespace StopLossKata3
                                 new CallMeIn15SecondsWith(new RemoveFromLow(_priceId)),
                                 new CallMeIn30SecondsWith(new RemoveFromHigh(_priceId))
                             },
-                            _bus.Messages);
+                            Bus.Messages);
+        }
+    }
+
+    public abstract class SpecificationFor<TAggregate, TMessage> where TAggregate : Aggregate
+                                                                 where TMessage : Message
+    {
+        [SetUp]
+        public void Setup()
+        {
+            Bus = new FakeBus();
+            Subject = (TAggregate)Activator.CreateInstance(typeof(TAggregate), Bus);
+        }
+
+        protected FakeBus Bus;
+        protected TAggregate Subject;
+    }
+
+    public abstract class Aggregate
+    {
+        readonly Bus _bus;
+
+        protected Aggregate(Bus bus)
+        {
+            _bus = bus;
+        }
+
+        public Bus Bus
+        {
+            get
+            {
+                return _bus;
+            }
         }
     }
 }

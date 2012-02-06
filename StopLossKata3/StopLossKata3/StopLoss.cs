@@ -1,18 +1,15 @@
 ﻿namespace StopLossKata3
 {
-    public class StopLoss
+    public class StopLoss : Aggregate
     {
-        readonly FakeBus _bus;
-
-        public StopLoss(FakeBus bus)
+        public StopLoss(Bus bus) : base(bus)
         {
-            _bus = bus;
         }
 
         public void Handle(PositionAcquired positionAcquired)
         {
-            _bus.Publish(new CallMeIn15SecondsWith(new RemoveFromLow(positionAcquired.PriceId)));
-            _bus.Publish(new CallMeIn30SecondsWith(new RemoveFromHigh(positionAcquired.PriceId)));
+            Bus.Publish(new CallMeIn15SecondsWith(new RemoveFromLow(positionAcquired.PriceId)));
+            Bus.Publish(new CallMeIn30SecondsWith(new RemoveFromHigh(positionAcquired.PriceId)));
         }
     }
 }
