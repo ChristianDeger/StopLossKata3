@@ -1,0 +1,13 @@
+[Oo]bj/
+[Bb]in/
+deploy/
+log/
+_ReSharper.*/
+
+*.user
+*.suo
+*.[Cc]ache
+
+*.crunchsolution.local.xml
+
+~/
