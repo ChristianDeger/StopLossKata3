@@ -57,6 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoveFromHigh.cs" />
     <Compile Include="RemoveFromLow.cs" />
+    <Compile Include="SpecificationFor.cs" />
     <Compile Include="StopLoss.cs" />
     <Compile Include="StopLossSpecs.cs" />
   </ItemGroup>
