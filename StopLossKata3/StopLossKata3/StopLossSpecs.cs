@@ -34,21 +34,33 @@ namespace StopLossKata3
         }
     }
 
-    public abstract class Aggregate
+    [TestFixture]
+    public class When_price_is_changed : SpecificationFor<StopLoss, PriceChanged>
     {
-        readonly Bus _bus;
+        Guid _priceId;
 
-        protected Aggregate(Bus bus)
+        protected override IEnumerable<Message> Given()
         {
-            _bus = bus;
+            _priceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, Guid.NewGuid());
         }
 
-        public Bus Bus
+        protected override PriceChanged When()
         {
-            get
-            {
-                return _bus;
-            }
+            return new PriceChanged(10.0m, _priceId);
+        }
+
+        [Test]
+        public void It_should_want_a_callback_to_remove_low_in_15_seconds()
+        {
+            ShouldRaise(new CallMeIn30SecondsWith(new RemoveFromHigh(_priceId)));
+        }
+
+        [Test]
+        public void It_should_want_a_callback_to_remove_high_in_30_seconds()
+        {
+            ShouldRaise(new CallMeIn30SecondsWith(new RemoveFromHigh(_priceId)));
         }
     }
+
 }

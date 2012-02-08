@@ -11,5 +11,11 @@
             Bus.Publish(new CallMeIn15SecondsWith(new RemoveFromLow(positionAcquired.PriceId)));
             Bus.Publish(new CallMeIn30SecondsWith(new RemoveFromHigh(positionAcquired.PriceId)));
         }
+
+        public void Handle(PriceChanged priceChanged)
+        {
+            Bus.Publish(new CallMeIn15SecondsWith(new RemoveFromLow(priceChanged.PriceId)));
+            Bus.Publish(new CallMeIn30SecondsWith(new RemoveFromHigh(priceChanged.PriceId)));
+        }
     }
 }
