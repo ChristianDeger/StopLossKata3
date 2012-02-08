@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using NUnit.Framework;
@@ -29,6 +30,12 @@ namespace StopLossKata3
         protected void ShouldRaise(Message message)
         {
             Assert.Contains(message, _bus.Messages);
+        }
+
+        protected void ShouldNotRaise<T>()
+        {
+            var contained = _bus.Messages.Any(x => x.GetType() == typeof(T));
+            Assert.IsFalse(contained);
         }
 
         void ReplayEventsOnSubject(IEnumerable<Message> events)

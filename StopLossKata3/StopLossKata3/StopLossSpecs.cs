@@ -63,4 +63,80 @@ namespace StopLossKata3
         }
     }
 
+    [TestFixture]
+    public class When_price_below_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss, RemoveFromLow>
+    {
+        Guid _positionPriceId;
+        Guid _changedPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+            yield return new PriceChanged(9.0m, _changedPriceId);
+        }
+
+        protected override RemoveFromLow When()
+        {
+            return new RemoveFromLow(_changedPriceId);
+        }
+
+        [Test]
+        public void It_should_sell_stock()
+        {
+            ShouldRaise(new SellStock(_positionPriceId));
+        }
+    }
+
+    [TestFixture]
+    public class When_price_within_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss, RemoveFromLow>
+    {
+        Guid _positionPriceId;
+        Guid _changedPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+            yield return new PriceChanged(9.9m, _changedPriceId);
+        }
+
+        protected override RemoveFromLow When()
+        {
+            return new RemoveFromLow(_changedPriceId);
+        }
+
+        [Test]
+        public void It_should_not_sell_stock()
+        {
+            ShouldNotRaise<SellStock>();
+        }
+    }
+
+    [TestFixture]
+    public class When_price_below_threshold_is_sustained_for_less_than_30_seconds_without_price_changes : SpecificationFor<StopLoss, PriceChanged>
+    {
+        Guid _positionPriceId;
+        Guid _changedPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+        }
+
+        protected override PriceChanged When()
+        {
+            return new PriceChanged(9.0m, _changedPriceId);
+        }
+
+        [Test]
+        public void It_should_not_sell_stock()
+        {
+            ShouldNotRaise<SellStock>();
+        }
+    }
 }
