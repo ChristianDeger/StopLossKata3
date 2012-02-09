@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace StopLossKata3
 {
     [TestFixture]
-    public class When_position_is_acquired : SpecificationFor<StopLoss, PositionAcquired>
+    public class When_position_is_acquired : SpecificationFor<StopLoss>
     {
         Guid _priceId;
 
@@ -16,7 +16,7 @@ namespace StopLossKata3
             yield break;
         }
 
-        protected override PositionAcquired When()
+        protected override Message When()
         {
             return new PositionAcquired(10.0m, _priceId);
         }
@@ -35,7 +35,7 @@ namespace StopLossKata3
     }
 
     [TestFixture]
-    public class When_price_is_changed : SpecificationFor<StopLoss, PriceChanged>
+    public class When_price_is_changed : SpecificationFor<StopLoss>
     {
         Guid _priceId;
 
@@ -45,7 +45,7 @@ namespace StopLossKata3
             yield return new PositionAcquired(10.0m, Guid.NewGuid());
         }
 
-        protected override PriceChanged When()
+        protected override Message When()
         {
             return new PriceChanged(10.0m, _priceId);
         }
@@ -64,7 +64,7 @@ namespace StopLossKata3
     }
 
     [TestFixture]
-    public class When_price_below_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss, RemoveFromLow>
+    public class When_price_below_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
         Guid _changedPriceId;
@@ -77,7 +77,7 @@ namespace StopLossKata3
             yield return new PriceChanged(9.0m, _changedPriceId);
         }
 
-        protected override RemoveFromLow When()
+        protected override Message When()
         {
             return new RemoveFromLow(_changedPriceId);
         }
@@ -90,7 +90,7 @@ namespace StopLossKata3
     }
 
     [TestFixture]
-    public class When_price_within_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss, RemoveFromLow>
+    public class When_price_within_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
         Guid _changedPriceId;
@@ -103,7 +103,7 @@ namespace StopLossKata3
             yield return new PriceChanged(9.9m, _changedPriceId);
         }
 
-        protected override RemoveFromLow When()
+        protected override Message When()
         {
             return new RemoveFromLow(_changedPriceId);
         }
@@ -116,7 +116,7 @@ namespace StopLossKata3
     }
 
     [TestFixture]
-    public class When_price_below_threshold_is_sustained_for_less_than_30_seconds_without_price_changes : SpecificationFor<StopLoss, PriceChanged>
+    public class When_price_below_threshold_is_sustained_for_less_than_30_seconds_without_price_changes : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
         Guid _changedPriceId;
@@ -128,7 +128,7 @@ namespace StopLossKata3
             yield return new PositionAcquired(10.0m, _positionPriceId);
         }
 
-        protected override PriceChanged When()
+        protected override Message When()
         {
             return new PriceChanged(9.0m, _changedPriceId);
         }

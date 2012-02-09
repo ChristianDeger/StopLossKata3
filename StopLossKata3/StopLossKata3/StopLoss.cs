@@ -7,7 +7,7 @@ namespace StopLossKata3
     {
         Guid _positionPriceId;
         decimal _positionPrice;
-        Dictionary<Guid, decimal> _lowPrices = new Dictionary<Guid, decimal>();
+        readonly Dictionary<Guid, decimal> _lowPrices = new Dictionary<Guid, decimal>();
 
         public StopLoss(Bus bus) : base(bus)
         {

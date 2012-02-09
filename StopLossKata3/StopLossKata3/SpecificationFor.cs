@@ -7,8 +7,7 @@ using NUnit.Framework;
 
 namespace StopLossKata3
 {
-    public abstract class SpecificationFor<TAggregate, TMessage> where TAggregate : Aggregate
-                                                                 where TMessage : Message
+    public abstract class SpecificationFor<TAggregate> where TAggregate : Aggregate
     {
         FakeBus _bus;
         protected TAggregate Subject;
@@ -25,7 +24,7 @@ namespace StopLossKata3
 
         protected abstract IEnumerable<Message> Given();
 
-        protected abstract TMessage When();
+        protected abstract Message When();
 
         protected void ShouldRaise(Message message)
         {
