@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace StopLossKata3
 {
@@ -17,6 +18,7 @@ namespace StopLossKata3
         {
             Bus.Publish(new CallMeIn15SecondsWith(new RemoveFromLow(message.PriceId)));
             Bus.Publish(new CallMeIn30SecondsWith(new RemoveFromHigh(message.PriceId)));
+            _lowPrices.Add(message.PriceId, message.Price);
             _positionPriceId = message.PriceId;
             _positionPrice = message.Price;
         }
@@ -31,8 +33,12 @@ namespace StopLossKata3
         public void Handle(RemoveFromLow message)
         {
             var price = _lowPrices[message.PriceId];
-            if (price < _positionPrice * 0.95m)
-                Bus.Publish(new SellStock(_positionPriceId));
+            _lowPrices.Remove(message.PriceId);
+            if (_lowPrices.Count == 0 || _lowPrices.Values.All(x => x <= price))
+            {
+                if (price < _positionPrice * 0.95m)
+                    Bus.Publish(new SellStock(_positionPriceId));
+            }
         }
     }
 }

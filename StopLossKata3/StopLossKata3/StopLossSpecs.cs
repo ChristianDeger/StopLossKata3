@@ -75,6 +75,7 @@ namespace StopLossKata3
             _changedPriceId = Guid.NewGuid();
             yield return new PositionAcquired(10.0m, _positionPriceId);
             yield return new PriceChanged(9.0m, _changedPriceId);
+            yield return new RemoveFromLow(_positionPriceId);
         }
 
         protected override Message When()
@@ -101,6 +102,7 @@ namespace StopLossKata3
             _changedPriceId = Guid.NewGuid();
             yield return new PositionAcquired(10.0m, _positionPriceId);
             yield return new PriceChanged(9.9m, _changedPriceId);
+            yield return new RemoveFromLow(_positionPriceId);
         }
 
         protected override Message When()
@@ -137,6 +139,90 @@ namespace StopLossKata3
         public void It_should_not_sell_stock()
         {
             ShouldNotRaise<SellStock>();
+        }
+    }
+
+    [TestFixture]
+    public class When_price_below_threshold_is_not_sustained_for_30_seconds_because_of_higher_price : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+        Guid _changedPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+            yield return new PriceChanged(9.0m, _changedPriceId);
+            yield return new PriceChanged(10.0m, Guid.NewGuid());
+            yield return new RemoveFromLow(_positionPriceId);
+        }
+
+        protected override Message When()
+        {
+            return new RemoveFromLow(_changedPriceId);
+        }
+
+        [Test]
+        public void It_should_not_sell_stock()
+        {
+            ShouldNotRaise<SellStock>();
+        }
+    }
+
+    [TestFixture]
+    public class When_price_below_threshold_is_sustained_for_30_seconds_with_same_price_change : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+        Guid _changedPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+            yield return new PriceChanged(9.0m, _changedPriceId);
+            yield return new PriceChanged(9.0m, Guid.NewGuid());
+            yield return new RemoveFromLow(_positionPriceId);
+        }
+
+        protected override Message When()
+        {
+            return new RemoveFromLow(_changedPriceId);
+        }
+
+        [Test]
+        public void It_should_sell_stock()
+        {
+            ShouldRaise(new SellStock(_positionPriceId));
+        }
+    }
+
+    [TestFixture]
+    public class When_price_below_threshold_is_sustained_for_30_seconds_with_lower_price_change : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+        Guid _changedPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+            yield return new PriceChanged(9.0m, _changedPriceId);
+            yield return new PriceChanged(8.9m, Guid.NewGuid());
+            yield return new RemoveFromLow(_positionPriceId);
+        }
+
+        protected override Message When()
+        {
+            return new RemoveFromLow(_changedPriceId);
+        }
+
+        [Test]
+        public void It_should_sell_stock()
+        {
+            ShouldRaise(new SellStock(_positionPriceId));
         }
     }
 }
