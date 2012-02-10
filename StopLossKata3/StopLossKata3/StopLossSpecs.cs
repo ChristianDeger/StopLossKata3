@@ -225,4 +225,37 @@ namespace StopLossKata3
             ShouldRaise(new SellStock(_positionPriceId));
         }
     }
+
+    [TestFixture]
+    public class When_higher_price_is_sustained_for_15_seconds_and_dropping_price_below_new_threshold_for_30_seconds : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+        Guid _changedHighPriceId;
+        Guid _changedLowPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            _changedHighPriceId = Guid.NewGuid();
+            _changedLowPriceId = Guid.NewGuid();
+            yield return new PositionAcquired(10.0m, _positionPriceId);
+            yield return new PriceChanged(11.0m, _changedHighPriceId);
+            yield return new RemoveFromHigh(_positionPriceId);
+            yield return new RemoveFromHigh(_changedHighPriceId);
+            yield return new PriceChanged(10.0m, _changedLowPriceId);
+            yield return new RemoveFromLow(_positionPriceId);
+            yield return new RemoveFromLow(_changedHighPriceId);
+        }
+
+        protected override Message When()
+        {
+            return new RemoveFromLow(_changedLowPriceId);
+        }
+
+        [Test]
+        public void It_should_sell_stock()
+        {
+            ShouldRaise(new SellStock(_positionPriceId));
+        }
+    }
 }
