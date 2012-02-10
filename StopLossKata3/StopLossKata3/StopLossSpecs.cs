@@ -13,12 +13,8 @@ namespace StopLossKata3
         protected override IEnumerable<Message> Given()
         {
             _priceId = Guid.NewGuid();
-            yield break;
-        }
-
-        protected override Message When()
-        {
-            return new PositionAcquired(10.0m, _priceId);
+            yield return new SignalAndOfSetup();
+            yield return new PositionAcquired(10.0m, _priceId);
         }
 
         [Test]
@@ -43,11 +39,8 @@ namespace StopLossKata3
         {
             _priceId = Guid.NewGuid();
             yield return new PositionAcquired(10.0m, Guid.NewGuid());
-        }
-
-        protected override Message When()
-        {
-            return new PriceChanged(10.0m, _priceId);
+            yield return new SignalAndOfSetup();
+            yield return new PriceChanged(10.0m, _priceId);
         }
 
         [Test]
@@ -76,11 +69,8 @@ namespace StopLossKata3
             yield return new PositionAcquired(10.0m, _positionPriceId);
             yield return new PriceChanged(9.0m, _changedPriceId);
             yield return new RemoveFromLow(_positionPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new RemoveFromLow(_changedPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new RemoveFromLow(_changedPriceId);
         }
 
         [Test]
@@ -103,11 +93,8 @@ namespace StopLossKata3
             yield return new PositionAcquired(10.0m, _positionPriceId);
             yield return new PriceChanged(9.9m, _changedPriceId);
             yield return new RemoveFromLow(_positionPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new RemoveFromLow(_changedPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new RemoveFromLow(_changedPriceId);
         }
 
         [Test]
@@ -128,11 +115,8 @@ namespace StopLossKata3
             _positionPriceId = Guid.NewGuid();
             _changedPriceId = Guid.NewGuid();
             yield return new PositionAcquired(10.0m, _positionPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new PriceChanged(9.0m, _changedPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new PriceChanged(9.0m, _changedPriceId);
         }
 
         [Test]
@@ -156,11 +140,8 @@ namespace StopLossKata3
             yield return new PriceChanged(9.0m, _changedPriceId);
             yield return new PriceChanged(10.0m, Guid.NewGuid());
             yield return new RemoveFromLow(_positionPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new RemoveFromLow(_changedPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new RemoveFromLow(_changedPriceId);
         }
 
         [Test]
@@ -184,11 +165,8 @@ namespace StopLossKata3
             yield return new PriceChanged(9.0m, _changedPriceId);
             yield return new PriceChanged(9.0m, Guid.NewGuid());
             yield return new RemoveFromLow(_positionPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new RemoveFromLow(_changedPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new RemoveFromLow(_changedPriceId);
         }
 
         [Test]
@@ -212,11 +190,8 @@ namespace StopLossKata3
             yield return new PriceChanged(9.0m, _changedPriceId);
             yield return new PriceChanged(8.9m, Guid.NewGuid());
             yield return new RemoveFromLow(_positionPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new RemoveFromLow(_changedPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new RemoveFromLow(_changedPriceId);
         }
 
         [Test]
@@ -245,11 +220,8 @@ namespace StopLossKata3
             yield return new PriceChanged(10.0m, _changedLowPriceId);
             yield return new RemoveFromLow(_positionPriceId);
             yield return new RemoveFromLow(_changedHighPriceId);
-        }
-
-        protected override Message When()
-        {
-            return new RemoveFromLow(_changedLowPriceId);
+            yield return new SignalAndOfSetup();
+            yield return new RemoveFromLow(_changedLowPriceId);
         }
 
         [Test]

@@ -17,14 +17,10 @@ namespace StopLossKata3
         {
             _bus = new FakeBus();
             Subject = (TAggregate)Activator.CreateInstance(typeof(TAggregate), _bus);
-            ReplayEventsOnSubject(Given());
-            _bus.Clear();
-            ReplayEventOnSubject(When());
+            ReplayEvents(Given());
         }
 
         protected abstract IEnumerable<Message> Given();
-
-        protected abstract Message When();
 
         protected void ShouldRaise(Message message)
         {
@@ -37,12 +33,24 @@ namespace StopLossKata3
             Assert.IsFalse(contained);
         }
 
-        void ReplayEventsOnSubject(IEnumerable<Message> events)
+        void ReplayEvents(IEnumerable<Message> events)
         {
             foreach (var @event in events)
             {
-                ReplayEventOnSubject(@event);
+                if (@event.GetType() == typeof(SignalAndOfSetup))
+                {
+                    EndOfSetup();
+                }
+                else
+                {
+                    ReplayEventOnSubject(@event);
+                }
             }
+        }
+
+        void EndOfSetup()
+        {
+            _bus.Clear();
         }
 
         void ReplayEventOnSubject(Message @event)
@@ -53,5 +61,9 @@ namespace StopLossKata3
                                             Subject,
                                             new object[] { @event });
         }
+    }
+
+    public class SignalAndOfSetup : Message
+    {
     }
 }
