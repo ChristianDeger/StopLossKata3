@@ -149,17 +149,14 @@ namespace StopLossKata3
     public class When_price_below_threshold_is_sustained_for_30_seconds_with_same_price_change : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
-        Guid _changedPriceId;
 
         protected override IEnumerable<Message> Given()
         {
             _positionPriceId = Guid.NewGuid();
-            _changedPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(9.0m, _changedPriceId);
-            yield return new PriceChanged(9.0m, Guid.NewGuid());
-            yield return new RemoveFromLow(_positionPriceId);
-            yield return new RemoveFromLow(_changedPriceId);
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 9.0m)
+                .ChangePrice(10, 9.0m)
+                .ObserveAt(35);
         }
 
         [Test]
@@ -173,17 +170,14 @@ namespace StopLossKata3
     public class When_price_below_threshold_is_sustained_for_30_seconds_with_lower_price_change : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
-        Guid _changedPriceId;
 
         protected override IEnumerable<Message> Given()
         {
             _positionPriceId = Guid.NewGuid();
-            _changedPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(9.0m, _changedPriceId);
-            yield return new PriceChanged(8.9m, Guid.NewGuid());
-            yield return new RemoveFromLow(_positionPriceId);
-            yield return new RemoveFromLow(_changedPriceId);
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 9.0m)
+                .ChangePrice(10, 8.9m)
+                .ObserveAt(35);
         }
 
         [Test]
@@ -197,23 +191,14 @@ namespace StopLossKata3
     public class When_higher_price_is_sustained_for_15_seconds_and_dropping_price_below_new_threshold_for_30_seconds : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
-        Guid _changedHighPriceId;
-        Guid _changedLowPriceId;
 
         protected override IEnumerable<Message> Given()
         {
             _positionPriceId = Guid.NewGuid();
-            _changedHighPriceId = Guid.NewGuid();
-            _changedLowPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(11.0m, _changedHighPriceId);
-            yield return new RemoveFromHigh(_positionPriceId);
-            yield return new RemoveFromHigh(_changedHighPriceId);
-            yield return new PriceChanged(10.0m, _changedLowPriceId);
-            yield return new RemoveFromLow(_positionPriceId);
-            yield return new RemoveFromLow(_changedHighPriceId);
-            yield return new RemoveFromHigh(_changedLowPriceId);
-            yield return new RemoveFromLow(_changedLowPriceId);
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 11.0m)
+                .ChangePrice(21, 10.0m)
+                .ObserveAt(52);
         }
 
         [Test]

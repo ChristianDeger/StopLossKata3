@@ -15,11 +15,11 @@ namespace StopLossKata3
         [Test]
         public void Should_produce_messages_from_timeline()
         {
-            var ticker = new StockTicker(10.0m, _positionPriceId);
-            ticker.ChangePrice(5, 11.0m, _changedHighPriceId);
-            ticker.ChangePrice(21, 10.0m, _changedLowPriceId);
-            ticker.Observe(52);
-            CollectionAssert.AreEqual(Messages(), ticker.Messages);
+            var messages = new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 11.0m, _changedHighPriceId)
+                .ChangePrice(21, 10.0m, _changedLowPriceId)
+                .ObserveAt(52);
+            CollectionAssert.AreEqual(Messages(), messages);
         }
 
         IEnumerable<Message> Messages()

@@ -19,22 +19,30 @@ namespace StopLossKata3
             _callbacks.Add(new Tuple<int, Message>(LowInterval, new RemoveFromLow(positionPriceId)));
         }
 
-        public void ChangePrice(int seconds, decimal price, Guid priceId)
+        public StockTicker ChangePrice(int seconds, decimal price)
+        {
+            ChangePrice(seconds, price, Guid.NewGuid());
+            return this;
+        }
+
+        public StockTicker ChangePrice(int seconds, decimal price, Guid priceId)
         {
             TriggerCallbacks(seconds);
             Messages.Add(new PriceChanged(price, priceId));
             _callbacks.Add(new Tuple<int, Message>(HighInterval + seconds, new RemoveFromHigh(priceId)));
             _callbacks.Add(new Tuple<int, Message>(LowInterval + seconds, new RemoveFromLow(priceId)));
+            return this;
         }
 
-        public void Observe(int seconds)
+        public IEnumerable<Message> ObserveAt(int seconds)
         {
             TriggerCallbacks(seconds);
+            return Messages;
         }
 
         void TriggerCallbacks(int seconds)
         {
-            var pending = _callbacks.Where(x => x.Item1 < seconds).ToList();
+            var pending = _callbacks.Where(x => x.Item1 <= seconds).ToList();
             Messages.AddRange(pending.Select(x => x.Item2));
             foreach (var callback in pending)
             {
