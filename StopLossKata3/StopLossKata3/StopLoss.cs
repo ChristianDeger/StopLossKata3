@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using StopLossKata3.Messages;
+
 namespace StopLossKata3
 {
     public class StopLoss : Aggregate

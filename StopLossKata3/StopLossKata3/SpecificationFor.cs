@@ -5,6 +5,8 @@ using System.Reflection;
 
 using NUnit.Framework;
 
+using StopLossKata3.Messages;
+
 namespace StopLossKata3
 {
     public abstract class SpecificationFor<TAggregate> where TAggregate : Aggregate

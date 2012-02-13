@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
+using StopLossKata3.Messages;
+
 namespace StopLossKata3
 {
     [TestFixture]

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using StopLossKata3.Messages;
+
 namespace StopLossKata3
 {
     public interface Bus

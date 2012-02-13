@@ -1,15 +1,17 @@
-﻿namespace StopLossKata3
-{
-    public class CallMeIn30SecondsWith : Message
-    {
-        public readonly Message Callback;
+﻿using System;
 
-        public CallMeIn30SecondsWith(Message callback)
+namespace StopLossKata3.Messages
+{
+    public class RemoveFromLow : Message
+    {
+        public readonly Guid PriceId;
+
+        public RemoveFromLow(Guid priceId)
         {
-            Callback = callback;
+            PriceId = priceId;
         }
 
-        public bool Equals(CallMeIn30SecondsWith other)
+        public bool Equals(RemoveFromLow other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -19,7 +21,7 @@
             {
                 return true;
             }
-            return Equals(other.Callback, Callback);
+            return other.PriceId.Equals(PriceId);
         }
 
         public override bool Equals(object obj)
@@ -32,16 +34,16 @@
             {
                 return true;
             }
-            if (obj.GetType() != typeof(CallMeIn30SecondsWith))
+            if (obj.GetType() != typeof(RemoveFromLow))
             {
                 return false;
             }
-            return Equals((CallMeIn30SecondsWith)obj);
+            return Equals((RemoveFromLow)obj);
         }
 
         public override int GetHashCode()
         {
-            return (Callback != null ? Callback.GetHashCode() : 0);
+            return PriceId.GetHashCode();
         }
     }
 }

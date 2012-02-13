@@ -1,17 +1,20 @@
-using System;
+﻿using System;
 
-namespace StopLossKata3
+namespace StopLossKata3.Messages
 {
-    public class SellStock : Message
+    public class PriceChanged : Message
     {
         public readonly Guid PriceId;
 
-        public SellStock(Guid priceId)
+        public readonly decimal Price;
+
+        public PriceChanged(decimal price, Guid priceId)
         {
             PriceId = priceId;
+            Price = price;
         }
 
-        public bool Equals(SellStock other)
+        public bool Equals(PriceChanged other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -21,7 +24,7 @@ namespace StopLossKata3
             {
                 return true;
             }
-            return other.PriceId.Equals(PriceId);
+            return other.PriceId.Equals(PriceId) && other.Price == Price;
         }
 
         public override bool Equals(object obj)
@@ -34,16 +37,19 @@ namespace StopLossKata3
             {
                 return true;
             }
-            if (obj.GetType() != typeof(SellStock))
+            if (obj.GetType() != typeof(PriceChanged))
             {
                 return false;
             }
-            return Equals((SellStock)obj);
+            return Equals((PriceChanged)obj);
         }
 
         public override int GetHashCode()
         {
-            return PriceId.GetHashCode();
+            unchecked
+            {
+                return (PriceId.GetHashCode() * 397) ^ Price.GetHashCode();
+            }
         }
     }
 }

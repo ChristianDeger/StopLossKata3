@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using StopLossKata3.Messages;
+
 namespace StopLossKata3
 {
     // Creates Messages for StopLoss to consume. Inserts timed callbacks.

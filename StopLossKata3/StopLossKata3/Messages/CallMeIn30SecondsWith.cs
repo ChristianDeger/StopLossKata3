@@ -1,15 +1,15 @@
-﻿namespace StopLossKata3
+﻿namespace StopLossKata3.Messages
 {
-    public class CallMeIn15SecondsWith : Message
+    public class CallMeIn30SecondsWith : Message
     {
         public readonly Message Callback;
 
-        public CallMeIn15SecondsWith(Message callback)
+        public CallMeIn30SecondsWith(Message callback)
         {
             Callback = callback;
         }
 
-        public bool Equals(CallMeIn15SecondsWith other)
+        public bool Equals(CallMeIn30SecondsWith other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -32,11 +32,11 @@
             {
                 return true;
             }
-            if (obj.GetType() != typeof(CallMeIn15SecondsWith))
+            if (obj.GetType() != typeof(CallMeIn30SecondsWith))
             {
                 return false;
             }
-            return Equals((CallMeIn15SecondsWith)obj);
+            return Equals((CallMeIn30SecondsWith)obj);
         }
 
         public override int GetHashCode()

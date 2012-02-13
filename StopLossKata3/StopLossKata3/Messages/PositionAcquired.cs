@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace StopLossKata3
+namespace StopLossKata3.Messages
 {
     public class PositionAcquired : Message
     {

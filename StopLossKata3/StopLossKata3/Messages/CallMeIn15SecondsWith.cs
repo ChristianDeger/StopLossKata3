@@ -1,17 +1,15 @@
-﻿using System;
-
-namespace StopLossKata3
+﻿namespace StopLossKata3.Messages
 {
-    public class RemoveFromLow : Message
+    public class CallMeIn15SecondsWith : Message
     {
-        public readonly Guid PriceId;
+        public readonly Message Callback;
 
-        public RemoveFromLow(Guid priceId)
+        public CallMeIn15SecondsWith(Message callback)
         {
-            PriceId = priceId;
+            Callback = callback;
         }
 
-        public bool Equals(RemoveFromLow other)
+        public bool Equals(CallMeIn15SecondsWith other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -21,7 +19,7 @@ namespace StopLossKata3
             {
                 return true;
             }
-            return other.PriceId.Equals(PriceId);
+            return Equals(other.Callback, Callback);
         }
 
         public override bool Equals(object obj)
@@ -34,16 +32,16 @@ namespace StopLossKata3
             {
                 return true;
             }
-            if (obj.GetType() != typeof(RemoveFromLow))
+            if (obj.GetType() != typeof(CallMeIn15SecondsWith))
             {
                 return false;
             }
-            return Equals((RemoveFromLow)obj);
+            return Equals((CallMeIn15SecondsWith)obj);
         }
 
         public override int GetHashCode()
         {
-            return PriceId.GetHashCode();
+            return (Callback != null ? Callback.GetHashCode() : 0);
         }
     }
 }
