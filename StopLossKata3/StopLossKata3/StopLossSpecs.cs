@@ -58,16 +58,13 @@ namespace StopLossKata3
     public class When_price_below_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss>
     {
         Guid _positionPriceId;
-        Guid _changedPriceId;
 
         protected override IEnumerable<Message> Given()
         {
             _positionPriceId = Guid.NewGuid();
-            _changedPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(9.0m, _changedPriceId);
-            yield return new RemoveFromLow(_positionPriceId);
-            yield return new RemoveFromLow(_changedPriceId);
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 9.0m)
+                .ObserveAt(35);
         }
 
         [Test]
@@ -80,17 +77,11 @@ namespace StopLossKata3
     [TestFixture]
     public class When_price_within_threshold_is_sustained_for_30_seconds_without_price_changes : SpecificationFor<StopLoss>
     {
-        Guid _positionPriceId;
-        Guid _changedPriceId;
-
         protected override IEnumerable<Message> Given()
         {
-            _positionPriceId = Guid.NewGuid();
-            _changedPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(9.9m, _changedPriceId);
-            yield return new RemoveFromLow(_positionPriceId);
-            yield return new RemoveFromLow(_changedPriceId);
+            return new StockTicker(10.0m)
+                .ChangePrice(5, 9.9m)
+                .ObserveAt(35);
         }
 
         [Test]
@@ -103,15 +94,11 @@ namespace StopLossKata3
     [TestFixture]
     public class When_price_below_threshold_is_sustained_for_less_than_30_seconds_without_price_changes : SpecificationFor<StopLoss>
     {
-        Guid _positionPriceId;
-        Guid _changedPriceId;
-
         protected override IEnumerable<Message> Given()
         {
-            _positionPriceId = Guid.NewGuid();
-            _changedPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(9.0m, _changedPriceId);
+            return new StockTicker(10.0m)
+                .ChangePrice(5, 9.0m)
+                .ObserveAt(34);
         }
 
         [Test]
@@ -124,18 +111,12 @@ namespace StopLossKata3
     [TestFixture]
     public class When_price_below_threshold_is_not_sustained_for_30_seconds_because_of_higher_price : SpecificationFor<StopLoss>
     {
-        Guid _positionPriceId;
-        Guid _changedPriceId;
-
         protected override IEnumerable<Message> Given()
         {
-            _positionPriceId = Guid.NewGuid();
-            _changedPriceId = Guid.NewGuid();
-            yield return new PositionAcquired(10.0m, _positionPriceId);
-            yield return new PriceChanged(9.0m, _changedPriceId);
-            yield return new PriceChanged(10.0m, Guid.NewGuid());
-            yield return new RemoveFromLow(_positionPriceId);
-            yield return new RemoveFromLow(_changedPriceId);
+            return new StockTicker(10.0m)
+                .ChangePrice(5, 9.0m)
+                .ChangePrice(10, 10.0m)
+                .ObserveAt(40);
         }
 
         [Test]

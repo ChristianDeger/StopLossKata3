@@ -12,6 +12,10 @@ namespace StopLossKata3
         readonly List<Tuple<int, Message>> _callbacks = new List<Tuple<int, Message>>();
         public readonly List<Message> Messages = new List<Message>();
 
+        public StockTicker(decimal positionPrice) : this(positionPrice, Guid.NewGuid())
+        {
+        }
+
         public StockTicker(decimal positionPrice, Guid positionPriceId)
         {
             Messages.Add(new PositionAcquired(positionPrice, positionPriceId));
