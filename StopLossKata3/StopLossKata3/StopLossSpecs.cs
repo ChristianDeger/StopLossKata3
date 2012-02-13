@@ -188,4 +188,77 @@ namespace StopLossKata3
             ShouldRaise(new SellStock(_positionPriceId));
         }
     }
+
+    [TestFixture]
+    public class When_price_changes_often_and_trailing_stoploss_is_not_yet_triggered : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 11.0m)
+                .ChangePrice(10, 12.0m)
+                .ChangePrice(15, 11.0m)
+                .ChangePrice(20, 12.0m) // now 11.0 should be sustained for 15 seconds
+                .ChangePrice(21, 10.0m)
+                .ObserveAt(50);
+        }
+
+        [Test]
+        public void It_should_not_sell_stock()
+        {
+            ShouldNotRaise<SellStock>();
+        }
+    }
+
+    [TestFixture]
+    public class When_price_changes_often_and_trailing_stoploss_is_finally_triggered : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 11.0m)
+                .ChangePrice(10, 12.0m)
+                .ChangePrice(15, 11.0m)
+                .ChangePrice(20, 12.0m) // now 11.0 should be sustained for 15 seconds
+                .ChangePrice(21, 10.0m)
+                .ObserveAt(51);
+        }
+
+        [Test]
+        public void It_should_sell_stock()
+        {
+            ShouldRaise(new SellStock(_positionPriceId));
+        }
+    }
+
+    [TestFixture]
+    public class When_price_changes_often_and_stoploss_price_is_not_sustained : SpecificationFor<StopLoss>
+    {
+        Guid _positionPriceId;
+
+        protected override IEnumerable<Message> Given()
+        {
+            _positionPriceId = Guid.NewGuid();
+            return new StockTicker(10.0m, _positionPriceId)
+                .ChangePrice(5, 11.0m)
+                .ChangePrice(10, 12.0m)
+                .ChangePrice(15, 11.0m)
+                .ChangePrice(20, 12.0m) // now 11.0 should be sustained for 15 seconds
+                .ChangePrice(21, 10.0m)
+                .ChangePrice(30, 11.0m)
+                .ObserveAt(60);
+        }
+
+        [Test]
+        public void It_should_not_sell_stock()
+        {
+            ShouldNotRaise<SellStock>();
+        }
+    }
 }

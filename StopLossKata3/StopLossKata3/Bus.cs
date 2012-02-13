@@ -15,10 +15,5 @@ namespace StopLossKata3
         {
             Messages.Add(message);
         }
-
-        public void Clear()
-        {
-            Messages = new List<Message>();
-        }
     }
 }

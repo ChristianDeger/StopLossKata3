@@ -9,8 +9,8 @@ namespace StopLossKata3
     {
         const int HighInterval = 15;
         const int LowInterval = 30;
-        readonly List<Tuple<int, Message>> _callbacks = new List<Tuple<int, Message>>();
-        public readonly List<Message> Messages = new List<Message>();
+        readonly List<TimedCallback> _callbacks = new List<TimedCallback>();
+        readonly List<Message> _messages = new List<Message>();
 
         public StockTicker(decimal positionPrice) : this(positionPrice, Guid.NewGuid())
         {
@@ -18,9 +18,8 @@ namespace StopLossKata3
 
         public StockTicker(decimal positionPrice, Guid positionPriceId)
         {
-            Messages.Add(new PositionAcquired(positionPrice, positionPriceId));
-            _callbacks.Add(new Tuple<int, Message>(HighInterval, new RemoveFromHigh(positionPriceId)));
-            _callbacks.Add(new Tuple<int, Message>(LowInterval, new RemoveFromLow(positionPriceId)));
+            _messages.Add(new PositionAcquired(positionPrice, positionPriceId));
+            AddCallbacks(0, positionPriceId);
         }
 
         public StockTicker ChangePrice(int seconds, decimal price)
@@ -32,25 +31,42 @@ namespace StopLossKata3
         public StockTicker ChangePrice(int seconds, decimal price, Guid priceId)
         {
             TriggerCallbacks(seconds);
-            Messages.Add(new PriceChanged(price, priceId));
-            _callbacks.Add(new Tuple<int, Message>(HighInterval + seconds, new RemoveFromHigh(priceId)));
-            _callbacks.Add(new Tuple<int, Message>(LowInterval + seconds, new RemoveFromLow(priceId)));
+            _messages.Add(new PriceChanged(price, priceId));
+            AddCallbacks(seconds, priceId);
             return this;
+        }
+
+        void AddCallbacks(int seconds, Guid id)
+        {
+            _callbacks.Add(new TimedCallback(HighInterval + seconds, new RemoveFromHigh(id)));
+            _callbacks.Add(new TimedCallback(LowInterval + seconds, new RemoveFromLow(id)));
         }
 
         public IEnumerable<Message> ObserveAt(int seconds)
         {
             TriggerCallbacks(seconds);
-            return Messages;
+            return _messages;
         }
 
         void TriggerCallbacks(int seconds)
         {
-            var pending = _callbacks.Where(x => x.Item1 <= seconds).ToList();
-            Messages.AddRange(pending.Select(x => x.Item2));
+            var pending = _callbacks.Where(x => x.Seconds <= seconds).ToList();
             foreach (var callback in pending)
             {
+                _messages.Add(callback.Message);
                 _callbacks.Remove(callback);
+            }
+        }
+
+        class TimedCallback
+        {
+            public readonly int Seconds;
+            public readonly Message Message;
+
+            public TimedCallback(int seconds, Message message)
+            {
+                Seconds = seconds;
+                Message = message;
             }
         }
     }

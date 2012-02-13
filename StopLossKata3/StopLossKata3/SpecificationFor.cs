@@ -37,20 +37,8 @@ namespace StopLossKata3
         {
             foreach (var @event in events)
             {
-                if (@event.GetType() == typeof(SignalAndOfSetup))
-                {
-                    EndOfSetup();
-                }
-                else
-                {
-                    ReplayEventOnSubject(@event);
-                }
+                ReplayEventOnSubject(@event);
             }
-        }
-
-        void EndOfSetup()
-        {
-            _bus.Clear();
         }
 
         void ReplayEventOnSubject(Message @event)
@@ -61,9 +49,5 @@ namespace StopLossKata3
                                             Subject,
                                             new object[] { @event });
         }
-    }
-
-    public class SignalAndOfSetup : Message
-    {
     }
 }
