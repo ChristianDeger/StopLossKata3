@@ -61,6 +61,8 @@
     <Compile Include="RemoveFromLow.cs" />
     <Compile Include="SellStock.cs" />
     <Compile Include="SpecificationFor.cs" />
+    <Compile Include="StockTicker.cs" />
+    <Compile Include="StockTickerTests.cs" />
     <Compile Include="StopLoss.cs" />
     <Compile Include="StopLossSpecs.cs" />
   </ItemGroup>
